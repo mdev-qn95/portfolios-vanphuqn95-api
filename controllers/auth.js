@@ -1,5 +1,6 @@
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
+const config = require("../config/dev");
 
 // Authentication middleware
 // This middleware will check access token in authorization headers
@@ -16,3 +17,15 @@ exports.checkJwt = jwt({
   issuer: "https://vanphu-qn95.us.auth0.com/",
   algorithms: ["RS256"],
 });
+
+exports.checkRole = (role) => (req, res, next) => {
+  const user = req.user;
+
+  if (user && user[config.AUTH0_NAMESPACE + "/roles"].includes(role)) {
+    next();
+  } else {
+    return res
+      .status(401)
+      .send("You are not authorized to access this resource!");
+  }
+};
