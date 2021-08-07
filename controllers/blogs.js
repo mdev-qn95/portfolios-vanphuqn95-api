@@ -13,7 +13,10 @@ exports.getBlogs = async (req, res) => {
 
 exports.getBlogsByUser = async (req, res) => {
   const userId = req.user.sub;
-  const blogs = await Blog.find({ userId });
+  const blogs = await Blog.find({
+    userId,
+    status: { $in: ["draft", "published"] },
+  });
   return res.json(blogs);
 };
 
@@ -27,7 +30,7 @@ exports.getBlogBySlug = async (req, res) => {
   const { access_token } = await getAccessToken();
   const user = await getAuth0User(access_token)(blog.userId);
 
-  return res.json(blog);
+  return res.json({ blog, user });
 };
 
 exports.createBlog = async (req, res) => {
