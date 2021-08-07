@@ -8,6 +8,12 @@ exports.getBlogs = async (req, res) => {
   return res.json(blogs);
 };
 
+exports.getBlogsByUser = async (req, res) => {
+  const userId = req.user.sub;
+  const blogs = await Blog.find({ userId });
+  return res.json(blogs);
+};
+
 exports.getBlogById = async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   return res.json(blog);
@@ -27,7 +33,7 @@ exports.createBlog = async (req, res) => {
     const createdBlog = await blog.save();
     return res.json(createdBlog);
   } catch (e) {
-    return res.status(422).send(e);
+    return res.status(422).send(e.message);
   }
 };
 
